@@ -33,6 +33,7 @@ npm install <module name>
 ```js
 npm install express # 本地安装
 npm install express -g # 全局安装 
+npm install express -D # 开发依赖包（会被记录到 devDependencies节点下)
 ```
 
 1. 本地安装
@@ -98,52 +99,13 @@ npm install express -g # 全局安装
     "array-flatten": "1.1.1",
     "body-parser": "1.20.0",
     "content-disposition": "0.5.4",
-    "content-type": "~1.0.4",
-    "cookie": "0.5.0",
-    "cookie-signature": "1.0.6",
-    "debug": "2.6.9",
-    "depd": "2.0.0",
-    "encodeurl": "~1.0.2",
-    "escape-html": "~1.0.3",
-    "etag": "~1.8.1",
-    "finalhandler": "1.2.0",
-    "fresh": "0.5.2",
-    "http-errors": "2.0.0",
-    "merge-descriptors": "1.0.1",
-    "methods": "~1.1.2",
-    "on-finished": "2.4.1",
-    "parseurl": "~1.3.3",
-    "path-to-regexp": "0.1.7",
-    "proxy-addr": "~2.0.7",
-    "qs": "6.10.3",
-    "range-parser": "~1.2.1",
-    "safe-buffer": "5.2.1",
-    "send": "0.18.0",
-    "serve-static": "1.15.0",
-    "setprototypeof": "1.2.0",
-    "statuses": "2.0.1",
-    "type-is": "~1.6.18",
-    "utils-merge": "1.0.1",
-    "vary": "~1.1.2"
+    "content-type": "~1.0.4"
   },
   "devDependencies": {
     "after": "0.8.2",
     "connect-redis": "3.4.2",
     "cookie-parser": "1.4.6",
-    "cookie-session": "2.0.0",
-    "ejs": "3.1.7",
-    "eslint": "7.32.0",
-    "express-session": "1.17.2",
-    "hbs": "4.2.0",
-    "marked": "0.7.0",
-    "method-override": "3.0.0",
-    "mocha": "9.2.2",
-    "morgan": "1.10.0",
-    "multiparty": "4.2.3",
-    "nyc": "15.1.0",
-    "pbkdf2-password": "1.2.1",
-    "supertest": "6.2.3",
-    "vhost": "~3.0.2"
+    "cookie-session": "2.0.0"
   },
   "engines": {
     "node": ">= 0.10.0"
@@ -447,6 +409,48 @@ https://www.runoob.com/nodejs/nodejs-event.html
 ![image-20220722163019788](D:/ProgramFiles/typora/typora-images/image-20220722163019788.png)
 
 
+
+# 模块化
+
+![image-20221114211751772](D:/ProgramFiles/typora/typora-images/image-20221114211751772.png)
+
+
+
+导出:
+
+```js
+exports.add= function(a,b) {
+    return a + b;
+}
+
+
+
+========================================
+function add(a,b) {
+    return a+b;
+}
+module.exports={
+    add,
+}
+
+```
+
+导入：
+
+```js
+const math = require("./math.js");
+console.log(math.add(1,2))
+```
+
+
+
+
+
+
+
+
+
+# Express
 
 
 

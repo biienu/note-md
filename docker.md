@@ -1,13 +1,22 @@
-# 阿里云镜像地址:
+# docker 安装mysql
+
+```
+docker run -p 3306:3306 --name mysql -v /mydata/mysql/log:/var/log/mysql -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/conf:/etc/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:8.0.27
+```
+
+# docker 安装redis
+
+```
+mkdir -p /mydata/redis/conf
+touch /mydata/redis/conf/redis.conf
+
+docker run -p 6379:6379 --name redis -v /mydata/redis/data:/data -v /mydata/redis/conf/redis.conf:/etc/redis/redis.conf -d redis redis-server /etc/redis/redis.conf
+```
+
+# docker 安装nacos
 
 ```shell
-yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-
-yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-
-yum-config-manager --add-repo https://cr.console.aliyun.com/
- 
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+docker run -p 8848:8848 -p 9848:9848 -p 9849:9849 -v ./nacos/logs/:/home/nacos/logs -v ./nacos/data/:/home/nacos/data --name nacos -d nacos/nacos-server:2.0.2
 ```
 
 
@@ -127,7 +136,6 @@ docker inspect 容器id
 
 # 命令:
 docker exec -it 容器id /bin/bash    # 以交互方式进入容器
-
 docker attach 容器id  
 
 # 区别
@@ -141,13 +149,27 @@ docker attach 容器id
 docker cp 容器id:容器路径 主机路径
 ```
 
+# 服务器重启时开启容器
+
+```shell
+docker update --restart=always mysql
+```
+
 
 
 # docker stats 容器id 查看这个容器消耗cpu情况
 
+原   $2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu
 
 
 
+原   $2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu
+
+
+
+新   $2a$10$luWQ0k4VCAIlrJ.37hBpvORO71eGzbBQ/oJHEKzDjd38FDAj0ptgy
+
+$2a$10$nTKpduMtz3r7aH4DDJMfOOaNghIw7Sm.nGEbIw0YUoHDRU8fUA7le
 
 # commit 自己的镜像
 
@@ -228,7 +250,7 @@ local     juming-nginx
 # 如何区分具名挂载和匿名挂载，还是指定路径挂载
 -v 容器内路径   	# 匿名挂载
 -v 卷名:容器内路径	# 具名挂载
--v /宿主机上当h:容器内路径   # 指定路径挂载
+-v /宿主机路径:容器内路径   # 指定路径挂载
 ```
 
 **拓展：**
@@ -237,7 +259,7 @@ local     juming-nginx
 # 通过 -v 容器内路径:ro rw 改变读写权限 
 ro     readonly  # 只读
 rw     readwrite # 可读可写
-docker run -d -P --name nginx02 juming-nginx:/etc/nginx:ro nginx
+docker run -d -P --name nginx02 -v juming-nginx:/etc/nginx:ro nginx
 docker run -d -P --name nginx02 juming-nginx:/etc/nginx:rw nginx
 
 # ro 只要看到这个，只能通过宿主机来操作，不能在容器内修改
@@ -413,7 +435,7 @@ PING tomcat03 (172.17.0.4) 56(84) bytes of data.
 64 bytes from tomcat03 (172.17.0.4): icmp_seq=1 ttl=64 time=0.109 ms
 64 bytes from tomcat03 (172.17.0.4): icmp_seq=2 ttl=64 time=0.059 ms
 
-# 发现tomcat04 可以通过tomcat03pin通，但是tomcat03 不能通过tomcat04ping通。
+# 发现tomcat04 可以通过tomcat03ping通，但是tomcat03 不能通过tomcat04ping通。
 ```
 
 
@@ -547,11 +569,182 @@ PING tomcat-net01 (192.168.0.2) 56(84) bytes of data.
 
 
 
-[Overview of Docker Compose | Docker Documentation](https://docs.docker.com/compose/)
+官方文档：[Overview of Docker Compose | Docker Documentation](https://docs.docker.com/compose/)
+
+# docker compose是什么？
+
+![image-20220809205034605](D:/ProgramFiles/typora/typora-images/image-20220809205034605.png)
+
+
+
+# docker compose使用的三个步骤：
+
+**使用 Compose 基本上有三个步骤:**
+
+1. 用 Dockerfile 定义应用程序的环境，这样就可以在任何地方复制它。
+
+2. 在 docker-compose. yml 中定义组成应用程序的服务，以便它们可以在一个独立的环境中一起运行。
+
+3. 运行 Docker 组合，Docker 组合命令启动并运行整个应用程序。您可以选择运行 docker-Compose 使用 Compose 独立(docker-Compose 二进制)。
+
+
+
+docker-compose.yml文件类似这样：
+
+```yaml
+version: "3.9"  # optional since v1.27.0
+services:  
+  web:
+    build: .
+    ports:
+      - "8000:5000"
+    volumes:
+      - .:/code
+      - logvolume01:/var/log
+    links:
+      - redis
+  redis:
+    image: redis
+volumes:
+  logvolume01: {}
+  
+# services的配置：
+# https://docs.docker.com/compose/compose-file/compose-file-v3/#service-configuration-reference
+```
+
+
+
+![image-20220930125512253](D:/ProgramFiles/typora/typora-images/image-20220930125512253.png)
+
+
+
+![image-20220809205519214](D:/ProgramFiles/typora/typora-images/image-20220809205519214.png)
+
+![image-20220930132627378](D:/ProgramFiles/typora/typora-images/image-20220930132627378.png)
+
+![image-20220930132705828](D:/ProgramFiles/typora/typora-images/image-20220930132705828.png)
+
+
+
+![image-20220930132920416](D:/ProgramFiles/typora/typora-images/image-20220930132920416.png)
 
 
 
 
 
 
+
+# 安装docker-compose：
+
+
+
+官网安装教程(Linux)：[Install Docker Compose CLI plugin | Docker Documentation](https://docs.docker.com/compose/install/compose-plugin/#installing-compose-on-linux-systems)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# #### docker Swarm ############
+
+
+
+
+
+# #### K8s #########
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```shell
+docker run -p 3306:3306 --name mysql -v ./mysql/logs:/var/log/mysql -v ./mysql/data:/var/lib/mysql -v ./mysql/conf/my.cnf:/etc/my.cnf -v ./mysql/init:/docker-entrypoint-initdb.d/ -e MYSQL_ROOT_PASSWORD=shangke6 -d mysql:8.0.25
+```
+
+
+
+
+
+
+
+docker run  \
+-e TZ="Asia/Shanghai" \
+-e MODE=standalone \
+-e SPRING_DATASOURCE_PLATFORM=mysql \
+-e MYSQL_DATABASE_NUM=1 \
+-e MYSQL_SERVICE_HOST=8.130.19.144 \
+-e MYSQL_SERVICE_PORT=3306 \
+-e MYSQL_SERVICE_USER=root \
+-e MYSQL_SERVICE_PASSWORD=shangke6\
+-e MYSQL_SERVICE_DB_NAME=nacos_config \
+-p 8848:8848 \
+--name nacos \
+--restart=always \
+-d nacos/nacos-server
+————————————————
+版权声明：本文为CSDN博主「我只会跳一下」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/m0_58049961/article/details/122852485
+
+
+
+
+
+```shell
+docker run -e TZ="Asia/Shanghai" -e MODE=standalone -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_DATABASE_NUM=1 -e MYSQL_SERVICE_HOST=8.130.19.144 -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_USER=root -e MYSQL_SERVICE_PASSWORD=shangke6 -e MYSQL_SERVICE_DB_NAME=nacos_config -p 8848:8848 --name nacos --restart=always -d nacos/nacos-server:1.4.2
+```
+
+
+
+
+
+```txt
+com.alibaba.nacos.api.exception.NacosException: failed to req API:/nacos/v1/ns/instance after all servers([8.130.19.144:8848]) tried: java.net.ConnectException: Connection refused (Connection refused)
+```
+
+
+
+# docker 安装 rabbitMQ
+
+```shell
+docker run -d --hostname my-rabbit --name rabbitmq -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -e RABBITMQ_DEFAULT_VHOST=/ rabbitmq:3-management
+```
+
+# docker 安装 nginx
+
+```shell
+docker run -d -p 80:80 --name studentOrganizationFront -v /mydata/student-club/nginx/conf.d:/etc/nginx/conf.d -v /mydata/student-club/nginx/html:/usr/share/nginx/html -v /mydata/student-club/nginx/log:/var/log/nginx nginx
+```
 

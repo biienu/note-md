@@ -170,7 +170,7 @@ install(Vue)中的Vue参数是Vue构造器
 
 ![image-20220724201521085](D:/ProgramFiles/typora/typora-images/image-20220724201521085.png)
 
-# vue中组件间会值的方法：
+# vue中组件间传值的方法：
 
 ## 父-> 子    props
 
@@ -215,19 +215,180 @@ install(Vue)中的Vue参数是Vue构造器
 
 
 
+# Vuex
+
+*Vuex4版本只能在Vue3版本使用，Vuex3版本在Vue2版本中使用。*
+
+
+
+**原理图**:
+
+![image-20220806084200475](D:/ProgramFiles/typora/typora-images/image-20220806084200475.png)
+
+Actions中的函数接收的(arg1,arg2) arg1是上下文对象，arg2是接收到的value值，
 
 
 
 
 
+**使用**：
+
+![image-20220724234633622](D:/ProgramFiles/typora/typora-images/image-20220724234633622.png)
+
+![](D:/ProgramFiles/typora/typora-images/image-20220806192727580.png)
+
+![](D:/ProgramFiles/typora/typora-images/image-20220806192636565.png)
+
+## vuex模块化
+
+**简写：**
+
+![image-20220806083606962](D:/ProgramFiles/typora/typora-images/image-20220806083606962.png)
+
+![image-20220806085329542](D:/ProgramFiles/typora/typora-images/image-20220806085329542.png)
+
+
+
+**手写：**
+
+![image-20220806085342105](D:/ProgramFiles/typora/typora-images/image-20220806085342105.png)
+
+
+
+![image-20220806084053853](D:/ProgramFiles/typora/typora-images/image-20220806084053853.png)
+
+
+
+## 模块化
+
+![image-20220806085530967](D:/ProgramFiles/typora/typora-images/image-20220806085530967.png)
+
+![image-20220806085636348](D:/ProgramFiles/typora/typora-images/image-20220806085636348.png)
+
+
+
+# vue-router
+
+*vue-router@3 在vue2版本使用, vue-router@4在vue3版本使用*
+
+![image-20220725093823961](D:/ProgramFiles/typora/typora-images/image-20220725093823961.png)
+
+![image-20220725094542064](D:/ProgramFiles/typora/typora-images/image-20220725094542064.png)
+
+
+
+![](D:/ProgramFiles/typora/typora-images/image-20220725094321222.png)
+
+![image-20220725094414124](D:/ProgramFiles/typora/typora-images/image-20220725094414124.png)
+
+## 几个注意点：
+
+![image-20220725095335922](D:/ProgramFiles/typora/typora-images/image-20220725095335922.png)
+
+
+
+## 多级路由：
+
+![image-20220725130458151](D:/ProgramFiles/typora/typora-images/image-20220725130458151.png)
+
+
+
+![image-20220804153449604](D:/ProgramFiles/typora/typora-images/image-20220804153449604.png)
+
+
+
+![image-20220725130706250](D:/ProgramFiles/typora/typora-images/image-20220725130706250.png)
+
+
+
+![image-20220725130753037](D:/ProgramFiles/typora/typora-images/image-20220725130753037.png)
+
+![image-20220725130805974](D:/ProgramFiles/typora/typora-images/image-20220725130805974.png)
+
+
+
+## 路由参数
+
+
+
+### query参数：
+
+![](D:/ProgramFiles/typora/typora-images/image-20220725132334611.png)
+
+### params参数
+
+![](D:/ProgramFiles/typora/typora-images/image-20220725133426391.png)
+
+![image-20220725133408132](D:/ProgramFiles/typora/typora-images/image-20220725133408132.png)
+
+### props
+
+![image-20220725134552887](D:/ProgramFiles/typora/typora-images/image-20220725134552887.png)
+
+## 命名路由
+
+![image-20220725132747486](D:/ProgramFiles/typora/typora-images/image-20220725132747486.png)
+
+![image-20220725132810133](D:/ProgramFiles/typora/typora-images/image-20220725132810133.png)
+
+##  route-link的 replace属性
+
+![image-20220725135145329](D:/ProgramFiles/typora/typora-images/image-20220725135145329.png)
+
+## 编程式导航路由
+
+![image-20220725140944215](D:/ProgramFiles/typora/typora-images/image-20220725140944215.png)
+
+## 缓存路由组件 
+
+`include的值为组件名字，而非路由名子`
+
+![image-20220725141520401](D:/ProgramFiles/typora/typora-images/image-20220725141520401.png)
+
+## 路由守卫
+
+### 全局路由守卫
+
+
+
+![image-20220725144943998](D:/ProgramFiles/typora/typora-images/image-20220725144943998.png)
+
+### 独享路由守卫
+
+写在router.js的具体的路由中
+
+![image-20220725145259547](D:/ProgramFiles/typora/typora-images/image-20220725145259547.png)
+
+
+
+### 组件内路由守卫
+
+写在组件内
+
+![image-20220725150251124](D:/ProgramFiles/typora/typora-images/image-20220725150251124.png)
+
+
+
+## 路由的两种工作方式：
+
+![image-20220725151942409](D:/ProgramFiles/typora/typora-images/image-20220725151942409.png)
 
 
 
 
 
+# vue中两个新的生命周期钩子
+
+
+
+![image-20220725142237466](D:/ProgramFiles/typora/typora-images/image-20220725142237466.png)
 
 
 
 
 
+# 常见的ui组件库
 
+![image-20220725153918068](D:/ProgramFiles/typora/typora-images/image-20220725153918068.png)
+
+![image-20230508201507839](D:\ProgramFiles\Typora\typora-images\image-20230508201507839.png)

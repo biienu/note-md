@@ -1,5 +1,59 @@
 # juc 并发编程
 
+## 线程前置知识
+
+### 线程的状态
+
+```java
+/*
+1. new (新建状态)
+2. runnable (运行状态)
+3. BLOCKED  (阻塞状态)
+4. WAITING  (等待状态)
+5. TIMED_WAITING (超时等待状态)
+6. TERMINATED  (终止状态)
+*/
+
+源码：
+    public enum State {
+
+        NEW,
+
+        RUNNABLE,
+
+        BLOCKED,
+
+        WAITING,
+
+        TIMED_WAITING,
+
+        TERMINATED;
+    }
+```
+
+![image-20230312215954319](D:\ProgramFiles\Typora\typora-images\image-20230312215954319.png)
+
+***
+
+
+
+### wait() 和 sleep()的区别?
+
+```java
+共同点:
+	两者都可以暂停线程的执行。
+区别:
+	1. sleep() 方法没有释放锁, 而 wait() 方法释放了锁。
+    2. wait() 通常被用于线程间的交互/通信，sleep() 通常被用于暂停线程执行。
+    3. wait() 方法被调用后，不会自动苏醒，需要别的线程调用同一个对象的 notify() 或 notifyAll()。
+```
+
+### 为什么sleep()在Thread类中，而 wait() 在 Object类中?
+
+因为 wait() 方法会释放当前对象锁，每个对象都有一个对象锁，所以Object是所有类的父类。
+
+
+
 ## 1. 什么是 juc?
 
 juc(java.utils.concurrent)   并发编程包
@@ -25,6 +79,16 @@ juc(java.utils.concurrent)   并发编程包
 **Lock接口** 下面已知的实现类:
 
 ![image-20220623231243683](D:/ProgramFiles/typora/typora-images/image-20220623231243683.png)
+
+
+
+### synchronized 和 lock 锁的区别?
+
+![image-20220901201658117](D:/ProgramFiles/typora/typora-images/image-20220901201658117.png)
+
+
+
+
 
 
 
@@ -58,6 +122,102 @@ juc(java.utils.concurrent)   并发编程包
 >     while (<condition does not hold>) obj.wait(); ... // Perform action appropriate to condition 
 > }
 > ```
+
+
+
+![image-20220901204047409](D:/ProgramFiles/typora/typora-images/image-20220901204047409.png)
+
+
+
+### Connection精确通知
+
+```java
+package com.biienu.pc;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @Author: biienu
+ * condition 实现精准通知
+ * condition1.await(),  condition1.signal();
+ */
+public class C {
+    public static void main(String[] args) {
+        Data3 data = new Data3();
+        new Thread(()->{
+            for (int i = 0; i < 10; i++) {
+                data.printA();
+            }
+        }, "A").start();
+        new Thread(()->{            for (int i = 0; i < 10; i++) {
+            data.printB();
+        }}, "B").start();
+        new Thread(()->{
+            for (int i = 0; i < 10; i++) {
+                data.printC();
+            }
+        }, "C").start();
+    }
+}
+
+class Data3{
+
+    private int num = 0;
+    Lock lock = new ReentrantLock();
+    Condition condition1 = lock.newCondition();
+    Condition condition2 = lock.newCondition();
+    Condition condition3 = lock.newCondition();
+
+    public void printA(){
+        lock.lock();
+        try{
+            while(num != 0){
+                condition1.await();
+            }
+            System.out.println(Thread.currentThread().getName() + " AAAA  num = " + num);
+            num++;
+            condition2.signal();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void printB(){
+        lock.lock();
+        try{
+            while(num != 1){
+                condition2.await();
+            }
+            System.out.println(Thread.currentThread().getName() + " BBBB  num = " + num);
+            num++;
+            condition3.signal();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void printC(){
+        lock.lock();
+        try{
+            while(num != 2){
+                condition3.await();
+            }
+            System.out.println(Thread.currentThread().getName() + " CCCC  num = " + num);
+            num -= 2;
+            condition1.signal();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+}
+```
 
 
 
@@ -245,7 +405,7 @@ class MyThread implements Callable<Integer>{
    >             try {
    >                 semaphore.acquire();
    >                 System.out.println(Thread.currentThread().getName() + "占了一个车位");
-   >                 TimeUnit.SECONDS.sleep(3);// 占用停车位 2 秒
+   >                 TimeUnit.SECONDS.sleep(3);// 占用停车位 3 秒
    >                 System.out.println(Thread.currentThread().getName() + "离开了车位");
    >             } catch (InterruptedException e) {
    >                 e.printStackTrace();
@@ -360,10 +520,10 @@ class MyCache{
 **四组API**:
 
 | 方式         | 抛出异常 | 有返回值，不抛出异常 | 阻塞等待 | 超时等待 |
-| ------------ | -------- | -------------------- | -------- | -------- |
-| 添加         | add      | offer                | put()    | offer    |
-| 移除         | remove   | poll()               | take()   | poll()   |
-| 检测队首元素 | element  | peek                 |          |          |
+| ------------ | :------: | :------------------: | :------: | :------: |
+| 添加         |   add    |        offer         |  put()   |  offer   |
+| 移除         |  remove  |        poll()        |  take()  |  poll()  |
+| 检测队首元素 | element  |         peek         |          |          |
 
 1. **add、remove测试**
 
@@ -449,25 +609,24 @@ class MyCache{
    >     arrayBlockingQueue.put(2);
    >     arrayBlockingQueue.put(2);
    >     arrayBlockingQueue.put(2);
-   > 
    > }
    > //由于队列大小只有 3 ，所以在put(2)最后一个2时，会进入一直阻塞状态
    > 
    > ===============================================================================
-   >     public static void test01() throws InterruptedException {
+   >  public static void test01() throws InterruptedException {
    >     ArrayBlockingQueue arrayBlockingQueue = new ArrayBlockingQueue<>(3);
    >     arrayBlockingQueue.put(2);
    >     arrayBlockingQueue.put(2);
    >     arrayBlockingQueue.put(2);
-   > 
+   >    
+   >  System.out.println(arrayBlockingQueue.take());
    >     System.out.println(arrayBlockingQueue.take());
    >     System.out.println(arrayBlockingQueue.take());
    >     System.out.println(arrayBlockingQueue.take());
-   >     System.out.println(arrayBlockingQueue.take());
-   > } 
+   >    } 
    > //由于队列中只有三个元素，在第四次take()时，队列为空，会进入一直阻塞状态
    > ```
-
+   
 4. **offer、poll**
 
    > ```java
@@ -513,7 +672,7 @@ class MyCache{
 
 **池化技术**：
 
-程序的运行，本质：占用系统资源，优化资源的使用==》 池化技术。
+程序的运行，本质：占用系统资源，优化资源的使用==>> 池化技术。
 
 线程池、连接池、内存池、......创建、销毁过程十分浪费资源
 
@@ -658,6 +817,14 @@ pool-1-thread-10 ooo
 > ```
 >
 > 
+
+### cpu密集型和io密集型
+
+获取cpu 密集型 (cpu核数)`Runtime.getRuntime().availableProcessors()`
+
+![image-20220902151613665](D:/ProgramFiles/typora/typora-images/image-20220902151613665.png)
+
+
 
 
 
@@ -1080,6 +1247,10 @@ CSDN 关于JMM详解：[(13条消息) 详解什么是JMM！_阿里官方架构�
 
    > 保证代码的执行顺序
 
+![image-20220902161901595](D:/ProgramFiles/typora/typora-images/image-20220902161901595.png)
+
+![image-20220902162417983](D:/ProgramFiles/typora/typora-images/image-20220902162417983.png)
+
 
 
 ## 18. 单例模式
@@ -1188,7 +1359,6 @@ public class CASDemo {
         System.out.println(atomicInteger.get());//1998
     }
 }
-
 ```
 
 ### 19.1 ABA问题
@@ -1198,6 +1368,10 @@ public class CASDemo {
 > **ABA问题类似于mysql的乐观锁**
 
 ## 20、原子引用（解决ABA问题）
+
+![image-20220902160838516](D:/ProgramFiles/typora/typora-images/image-20220902160838516.png)
+
+
 
 ```java
 package com.biienu.cas;
@@ -1475,6 +1649,22 @@ class SpinLockTest{
 
 1. 使用java自带的`jsp -l`命令，可以查看当前所有进程号
 2. 使用`jstack 进程号`找到死锁问题
+
+
+
+# 22. ThreadLocal的使用
+
+ThreadLocal的介绍：
+
+![image-20220902213452065](D:/ProgramFiles/typora/typora-images/image-20220902213452065.png)
+
+常用方法:
+
+![image-20220902213516455](D:/ProgramFiles/typora/typora-images/image-20220902213516455.png)
+
+
+
+
 
 
 
