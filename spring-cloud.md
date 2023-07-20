@@ -317,6 +317,80 @@
 
 
 
+## 2.sentinel
+
+### 流控规则：
+
+![](D:/ProgramFiles/typora/typora-images/image-20220917205149383.png)
+
+
+
+![image-20220917210145188](D:/ProgramFiles/typora/typora-images/image-20220917210145188.png)
+
+![image-20220917210357280](D:/ProgramFiles/typora/typora-images/image-20220917210357280.png)
+
+
+
+**warm up**:
+
+![image-20220917211242747](D:/ProgramFiles/typora/typora-images/image-20220917211242747.png)
+
+**开始时，在预热时长之前的单机阈值为单机阈值/3（3为默认加载因子），在过了预热时长之后，单机阈值开始慢慢过渡到原先的单机**
+
+***
+
+**排队等待**：按请求顺序执行
+
+### 服务降级
+
+![image-20220917211944403](D:/ProgramFiles/typora/typora-images/image-20220917211944403.png)
+
+![image-20220917212100811](D:/ProgramFiles/typora/typora-images/image-20220917212100811.png)
+
+![image-20220917212340757](D:/ProgramFiles/typora/typora-images/image-20220917212340757.png)
+
+![image-20220917212400056](D:/ProgramFiles/typora/typora-images/image-20220917212400056.png)
+
+***
+
+### 热点规则
+
+![image-20220917212921615](D:/ProgramFiles/typora/typora-images/image-20220917212921615.png)
+
+![image-20220917213953256](D:/ProgramFiles/typora/typora-images/image-20220917213953256.png)
+
+***
+
+### 系统规则
+
+![image-20220917214312891](D:/ProgramFiles/typora/typora-images/image-20220917214312891.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***
+
 # 五、服务网关Gateway
 
 **什么SpringCloudGateway?**
@@ -417,13 +491,45 @@
 
 # 六、服务配置
 
+## nacos
 
+**nacos配置持久化**：
+
+1. 执行sql脚本
+
+   ![image-20220917200923385](D:/ProgramFiles/typora/typora-images/image-20220917200923385.png)
+
+2. 修改配置文件
+
+![image-20220917201302402](D:/ProgramFiles/typora/typora-images/image-20220917201302402.png)
+
+![image-20220917201237455](D:/ProgramFiles/typora/typora-images/image-20220917201237455.png)
 
 ***
 
 
 
 # 一、SpringCloudAlibaba
+
+
+
+## springcloud分布式事务问题？
+
+Transaction Id 全局唯一事务id + 三组件：
+
+**三组件**：
+
+1. Transaction Coordinator(TC) : 事务协议器，负责协调并驱动全局事务的提交或回滚；
+2. Transaction Manager(TM): 控制全局事务的边界，负责开启一个全局事务，并最终发起全局提交或全局回滚的决议；
+3. Resource Manager(RM): 控制分支事务，负责分支注册，状态汇报，并接收事务协议器的指令，驱动分支（本地）事务的提交和回滚；
+
+
+
+### seata原理简介？
+
+
+
+
 
 
 
